@@ -11,6 +11,7 @@ using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
@@ -22,21 +23,20 @@ namespace Poc_Farmtech {
         
         static string insiraUsr(string usrName,string query)
         {
-            Console.WriteLine("Digite seu nome de usuario");
+            Console.WriteLine("Digite seu nome de usuario\n");
             usrName = Console.ReadLine();
             using (SqlConnection sqlconn = new SqlConnection(connectionString))
             {
                 try
                 {
                     sqlconn.Open();
-                    Console.WriteLine("logou");
                     query = $"select count (*) from Tb_usuario where nome = @Nome";
                     SqlCommand cmd = new SqlCommand(query, sqlconn);
                     cmd.Parameters.AddWithValue("@Nome", usrName);
                     int count = (int)cmd.ExecuteScalar();
                     if (count > 0)
                     {
-                        Console.WriteLine($"O usuário '{usrName}' existe na tabela.");
+                        Console.WriteLine($"O usuário '{usrName}' existe na tabela.\n");
                         sqlconn.Close();
                         
                         return logar(usrName,"a","a");
@@ -69,8 +69,7 @@ namespace Poc_Farmtech {
                 query = "SELECT nome, senha FROM Db_farmtech.dbo.Tb_usuario WHERE nome = @Nome";
                 SqlCommand cmd = new SqlCommand(query, sqlconn);
                 cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@Nome", usrName);
-                Console.WriteLine("Nome: "+usrName+"\nSenha: "+usrSenha);
+                cmd.Parameters.AddWithValue("@Nome", usrName);                
                 SqlDataReader leitor = cmd.ExecuteReader();
 
                 if (leitor.Read())
@@ -89,39 +88,48 @@ namespace Poc_Farmtech {
                     {
                         sqlconn.Close();                        
                         Console.WriteLine($"Senha incorreta para o usuário '{nomeUsuario}'\n TENTE NOVAMENTE.");                        
-                        {                            
-                            logar(usrName, "a", "a");
-                            return "null";
+                        {
+                            return logar(usrName, "a", "a");                             
                         }
                         
                     }
+                    
                 }
                 else
                 {
                     Console.WriteLine($"Usuário '{usrName}' não encontrado.");
                     return "null";
-
+                    
                 }
-                leitor.Close();                
+                leitor.Close();
+
             }
         }
 
-        static void menu(string nome)
+        public static void menu(string usrName)
         {
-            Console.WriteLine("\n\nBem vindo: "+nome+"\nQual ação deseja testar?\n\n0-Cadastrar Usuario\n1-Cadastrar Cliente\n2-Cadastrar Fornecedor\n3-Cadastrar Produto\n");
+            Console.WriteLine("Iniciando menu e limpando tela");
+            Thread.Sleep(3000);
+            Console.Clear();
+
+            Console.WriteLine("\n\nBem vindo: "+usrName+"\nQual ação deseja testar?\n\n0-Cadastrar Usuario\n1-Cadastrar Cliente\n2-Cadastrar Fornecedor\n3-Cadastrar Produto\n");
             try
             {
                 switch (Console.ReadLine())
                 {
                     case "0":
                         Usuario usr = new Usuario();
-                        usr.cadUsuario(connectionString);
+                        usr.cadUsuario(connectionString,usrName);
                         break;
                     case "1":
                         Cliente cliente = new Cliente();
-                        cliente.cadCliente();
+                        cliente.cadCliente(usrName);
+                        break;
+                    case "2":                        
+                        Fornecedor.cadFornecedor(usrName);
                         break;
                 }
+
             }
             catch(Exception ex)
             {
@@ -133,9 +141,7 @@ namespace Poc_Farmtech {
 
             Console.WriteLine("Bem vindo a Poc do sistema Farmtech\n\nPara iniciar o teste vamos iniciar o login\n\n");
             string usrName = insiraUsr("a","a");            
-            menu(usrName);
-
-            
+            menu(usrName);           
 
         }
     }

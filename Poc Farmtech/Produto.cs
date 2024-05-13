@@ -8,5 +8,12 @@ namespace Poc_Farmtech
 {
     internal class Produto
     {
+        public void cadProduto()
+        {
+            string nome;
+            string unMedida;
+            string precoUn;
+
+        }
     }
 }
