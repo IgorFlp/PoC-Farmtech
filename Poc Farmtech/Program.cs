@@ -18,7 +18,7 @@ namespace Poc_Farmtech {
 
     class Program
     {
-        static string connectionString = @"Data Source=DESKTOP-69PP4N9;Initial Catalog=Db_Farmtech;Integrated Security=True;";
+        public static string connectionString = @"Data Source=DESKTOP-69PP4N9;Initial Catalog=Db_Farmtech;Integrated Security=True;";
         
         static string insiraUsr(string usrName,string query)
         {
@@ -30,7 +30,7 @@ namespace Poc_Farmtech {
                 {
                     sqlconn.Open();
                     Console.WriteLine("logou");
-                    query = $"select count (*) from Db_farmtech.dbo.Tb_usuario where nome = @Nome";
+                    query = $"select count (*) from Tb_usuario where nome = @Nome";
                     SqlCommand cmd = new SqlCommand(query, sqlconn);
                     cmd.Parameters.AddWithValue("@Nome", usrName);
                     int count = (int)cmd.ExecuteScalar();
@@ -50,10 +50,10 @@ namespace Poc_Farmtech {
                     }
                 }
                 catch (Exception ex)
-                {
-                    return "null";
+                {                    
                     Console.WriteLine(ex.Message);
-                    
+                    return "null";
+
                 }
             }
 
