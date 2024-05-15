@@ -128,6 +128,9 @@ namespace Poc_Farmtech {
                     case "2":                        
                         Fornecedor.cadFornecedor(usrName);
                         break;
+                    case "3":                        
+                        Produto.cadProduto(usrName);
+                        break;
                 }
 
             }
