@@ -13,6 +13,18 @@ namespace Poc_Farmtech
 {
     internal class Cliente
     {
+        public string cpf;
+        public string nome;
+        string telefone;
+        string email;
+        string dataNasc;
+        string genero;
+        string rua;
+        string bairro;
+        string cidade;
+        string estado;
+        string cep;
+
         public static string validacao(string tipo)
         {
             string input;
@@ -275,19 +287,19 @@ namespace Poc_Farmtech
 
         public void cadCliente(string usrName)
         {
-            string cpf = validacao("cpf");
-            string nome = validacao("nome");
-            string telefone = validacao("telefone");
-            string email = validacao("email");
-            string dataNasc = validacao("dataNasc");
-            string genero = validacao("genero");
+            cpf = validacao("cpf");
+            nome = validacao("nome");
+            telefone = validacao("telefone");
+            email = validacao("email");
+            dataNasc = validacao("dataNasc");
+            genero = validacao("genero");
 
             //endereço        
-            string rua = validacao("rua");
-            string bairro = validacao("bairro");
-            string cidade = validacao("cidade");
-            string estado = validacao("estado");
-            string cep = validacao("cep");
+            rua = validacao("rua");
+            bairro = validacao("bairro");
+            cidade = validacao("cidade");
+            estado = validacao("estado");
+            cep = validacao("cep");
 
             using (SqlConnection sqlconn = new SqlConnection(Program.connectionString))
             {
