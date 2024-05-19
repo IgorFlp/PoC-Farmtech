@@ -24,7 +24,7 @@ namespace Poc_Farmtech
         static decimal desconto;
         static decimal total;
         static string mtdPagto;
-        
+        static DateTime dtVenda = DateTime.Now;
 
         // pdt_id
         //-Usr_nome: Char(50)
@@ -84,7 +84,7 @@ namespace Poc_Farmtech
                 }
             }            
         }
-        private static void exibeProduto()
+        public static void exibeProduto()
         {
             using (SqlConnection sqlconn = new SqlConnection(Program.connectionString))
             {
@@ -184,7 +184,8 @@ namespace Poc_Farmtech
                         sair = false;
                     }
 
-                }                
+                }
+                
                 produtos.Add(saida);
                 quantidades.Add(qtd);
             }
@@ -281,7 +282,7 @@ namespace Poc_Farmtech
                 using (SqlConnection sqlconn = new SqlConnection(Program.connectionString))
                 {
                     sqlconn.Open();
-                    string query = $"INSERT INTO Db_Farmtech.dbo.Tb_venda (cl_cpf,usr_nome,subtotal,frete,cupom,desconto,total,mtdPagto) VALUES (@cpf,@usrName,@subtotal,@frete,@cupom,@desconto,@total,@mtdPagto); SELECT SCOPE_IDENTITY();";
+                    string query = $"INSERT INTO Db_Farmtech.dbo.Tb_venda (cl_cpf,usr_nome,subtotal,frete,cupom,desconto,total,mtdPagto,dtVenda,entrega) VALUES (@cpf,@usrName,@subtotal,@frete,@cupom,@desconto,@total,@mtdPagto,@dtVenda,@entrega); SELECT SCOPE_IDENTITY();";
                     //(cl_cpf,usr_nome,subtotal,frete,cupom,desconto,total,mtdPagto)
                     //(@cpf,@usrName,@subtotal,@frete,@cupom,@desconto,@total,@mtdPagto)
                     SqlCommand cmd = new SqlCommand(query, sqlconn);
@@ -293,6 +294,8 @@ namespace Poc_Farmtech
                     cmd.Parameters.AddWithValue("@desconto", desconto);
                     cmd.Parameters.AddWithValue("@total", total);
                     cmd.Parameters.AddWithValue("@mtdPagto", mtdPagto);
+                    cmd.Parameters.AddWithValue("@dtVenda",dtVenda);
+                    cmd.Parameters.AddWithValue("@entrega",entrega);
                     id = Convert.ToInt32(cmd.ExecuteScalar());
                     Console.WriteLine("Venda inserida com sucesso!");
                     cmd.Parameters.Clear();
@@ -315,7 +318,26 @@ namespace Poc_Farmtech
                     }                    
                     Console.WriteLine("Produtos da venda inseridos com sucesso!");
                     sqlconn.Close();
-                }                
+                }
+                using (SqlConnection sqlconn = new SqlConnection(Program.connectionString))
+                {
+                    sqlconn.Open();
+                    string query = $"UPDATE Db_Farmtech.dbo.Tb_estoque SET quant = quant - @quant where pdt_id = @pdt_id";
+                    //(cl_cpf,usr_nome,subtotal,frete,cupom,desconto,total,mtdPagto)
+                    //(@cpf,@usrName,@subtotal,@frete,@cupom,@desconto,@total,@mtdPagto)
+                    SqlCommand cmd = new SqlCommand(query, sqlconn);
+                    for (int i = 0; i < produtos.Count; i++)
+                    {
+                        cmd.Parameters.AddWithValue("@pdt_id", produtos[i].id);
+                        cmd.Parameters.AddWithValue("@quant", quantidades[i]);
+                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.Clear();
+                    }
+                    Console.WriteLine("Estoque atualizado!");
+                    sqlconn.Close();
+                }
+                 produtos.Clear();
+                 quantidades.Clear();
             }
             catch (Exception ex) { Console.WriteLine("Erro: " + ex.ToString()); }
         }
@@ -340,7 +362,7 @@ namespace Poc_Farmtech
             while(sair == false)
             {
                 resp = Console.ReadLine();
-                string upper = resp;
+                string upper = resp.ToUpper();
                 switch (upper)
                 {
                     case "S":
@@ -390,7 +412,9 @@ namespace Poc_Farmtech
                                     case "S":                                        
                                         input = Cupom.buscaCupom(); 
                                         if (input == null)
-                                        {                                          
+                                        {
+                                            cupom.nome = "Nenhum";
+                                            cupom.valor = 0;
                                             sair = false;
                                         }
                                         else
@@ -399,6 +423,8 @@ namespace Poc_Farmtech
                                         }
                                         break;
                                     case "N":
+                                        cupom.nome = "Nenhum";
+                                        cupom.valor = 0;
                                         sair = true;
                                         break;
                                     default:
@@ -428,8 +454,10 @@ namespace Poc_Farmtech
                         sair = true;
                         break;
                     case "N":
-                        sair = true;
+                        
+                        cupom.nome = "Nenhum";
                         desconto = 0m;
+                        sair = true;
                         break;
                     default:
                         Console.WriteLine("Escolha entre S ou N");
@@ -443,7 +471,10 @@ namespace Poc_Farmtech
             Console.WriteLine("\nTotal:{0,-8:C} ",total);
             mtdPagto = slcMtdPagto();
             confirmaVenda(usrName);
+            Console.WriteLine("Aperte enter quando quiser voltar para o menu");
             Console.ReadLine();
+            Program.menu(usrName);
+            
         }
         //Sequencia slcCliente -> slcProduto repetidamente-> calcSubtotal -> main "entrega ou retirada?" if entrega frete = 10,00 ->//
         //main "Mtd pagamento" -> main "Deseja preencher cupom? S/N"-> vldcupom desconto = cp_valor ->

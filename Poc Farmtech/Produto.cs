@@ -33,7 +33,19 @@ namespace Poc_Farmtech
                             cmd.Parameters.AddWithValue("@precoUn", precoUn);
                             id = Convert.ToInt32(cmd.ExecuteScalar());
                             sqlconn.Close();
-                            Console.WriteLine("Produto cadastrado com sucesso!");
+                            Console.WriteLine("Produto cadastrado com sucesso!");                          
+                        }
+
+                        using (SqlConnection sqlconn = new SqlConnection(Program.connectionString))
+                        {
+                            sqlconn.Open();
+                            string query = $"INSERT INTO Db_Farmtech.dbo.Tb_estoque (pdt_id, quant) VALUES (@pdt_id, @quant);";
+                            SqlCommand cmd = new SqlCommand(query, sqlconn);
+                            cmd.Parameters.AddWithValue("@pdt_id", id);
+                            cmd.Parameters.AddWithValue("@quant", 0);                            
+                            cmd.ExecuteNonQuery();
+                            sqlconn.Close();
+                            Console.WriteLine("Produto cadastrado no estoque com sucesso!");
                             return id;
 
                         }
@@ -229,6 +241,8 @@ namespace Poc_Farmtech
 
             produto.id = gravaDB("produto", produto.nome, produto.unMedida, produto.precoUn, produto.id);
             if (frnCnpj.Count > 0) { gravaDB("fornPdt", produto.nome, produto.unMedida, produto.precoUn, produto.id); }
+            Console.WriteLine("Aperte enter quando quiser voltar para o menu");
+            Console.ReadLine();
             Program.menu(usrName);
         }
     }

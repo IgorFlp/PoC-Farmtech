@@ -112,7 +112,7 @@ namespace Poc_Farmtech {
             Thread.Sleep(3000);
             Console.Clear();
 
-            Console.WriteLine("\n\nBem vindo: "+usrName+"\nQual ação deseja testar?\n\n0-Cadastrar Usuario\n1-Cadastrar Cliente\n2-Cadastrar Fornecedor\n3-Cadastrar Produto\n\n4-Vender");
+            Console.WriteLine("\n\nBem vindo: "+usrName+"\nQual ação deseja testar?\nCadastros\n0-Cadastrar Usuario\n1-Cadastrar Cliente\n2-Cadastrar Fornecedor\n3-Cadastrar Produto\n\nMovimentações\n\n4-Vender\n5-Produção\n6-Relatórios");
             try
             {
                 switch (Console.ReadLine())
@@ -133,6 +133,12 @@ namespace Poc_Farmtech {
                         break;
                     case "4":
                         Venda.vender(usrName);
+                        break;
+                    case "5":
+                        Producao.incluirProducao(usrName);
+                        break;
+                    case "6":
+                        Relatorios.gerarRelatorio();
                         break;
 
                 }

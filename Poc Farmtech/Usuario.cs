@@ -88,6 +88,8 @@ namespace Poc_Farmtech
                     }
                     sqlconn.Close();
                 }
+            Console.WriteLine("Aperte enter quando quiser voltar para o menu");
+            Console.ReadLine();
             Program.menu(usrName);
         }               
                 

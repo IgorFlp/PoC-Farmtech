@@ -24,7 +24,7 @@ namespace Poc_Farmtech
         string cidade;
         string estado;
         string cep;
-
+        
         public static string validacao(string tipo)
         {
             string input;
@@ -493,7 +493,9 @@ namespace Poc_Farmtech
 
 
                 }
-           Program.menu(usrName);
+            Console.WriteLine("Aperte enter quando quiser voltar para o menu");
+            Console.ReadLine();
+            Program.menu(usrName);
         }
     }
 }

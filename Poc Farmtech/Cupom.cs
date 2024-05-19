@@ -18,27 +18,30 @@ namespace Poc_Farmtech
         {
             Console.WriteLine("Preencha o nome do cupom");
             string input = Console.ReadLine();
-            using (SqlConnection sqlconn = new SqlConnection(Program.connectionString))
+            if (input != null)
             {
-                sqlconn.Open();                            
-                string query = $"select count (*) from Tb_cupom where nome = @nome";
-                SqlCommand cmd = new SqlCommand(query, sqlconn);
-                cmd.Parameters.AddWithValue("@nome", input);
-                int count = (int)cmd.ExecuteScalar();
-                sqlconn.Close();
-                if (count > 0)
+                using (SqlConnection sqlconn = new SqlConnection(Program.connectionString))
                 {
-                    Console.WriteLine("Cupom encontrado no banco de dados");
-                    return input;
+                    sqlconn.Open();
+                    string query = $"select count (*) from Tb_cupom where nome = @nome";
+                    SqlCommand cmd = new SqlCommand(query, sqlconn);
+                    cmd.Parameters.AddWithValue("@nome", input);
+                    int count = (int)cmd.ExecuteScalar();
+                    sqlconn.Close();
+                    if (count > 0)
+                    {
+                        Console.WriteLine("Cupom encontrado no banco de dados");
+                        return input;
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Cupom inexistente");
+                        return null;
+                    }
 
                 }
-                else
-                {
-                    Console.WriteLine("Cupom inexistente");
-                    return null;
-                }
-
-            }
+            }else { return null; }
             
         }
         public static Cupom validaCupom(string input)
@@ -90,7 +93,9 @@ namespace Poc_Farmtech
                                         break;
                                     case "N":
                                         sair = true;
-                                        break;
+                                    cupom.nome = "Nenhum";
+                                    cupom.valor = 0;
+                                    return cupom;                                    
                                     default:
                                         Console.WriteLine("Escolha entre S ou N");
                                         sair = false;
@@ -106,7 +111,9 @@ namespace Poc_Farmtech
 
                     }
                 }
-            return null;
+            cupom.nome = "Nenhum";
+            cupom.valor = 0;
+            return cupom;
             }
             
         }

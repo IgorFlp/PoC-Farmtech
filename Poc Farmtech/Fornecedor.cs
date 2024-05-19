@@ -45,8 +45,7 @@ namespace Poc_Farmtech
 
                                 }
                                 else
-                                {
-                                    //calculo de validação do cnpj
+                                {                                  
 
                                     return input;
                                 }
@@ -178,7 +177,7 @@ namespace Poc_Farmtech
                     }
                     else
                     {
-                        //calculo de validação do cpf
+                        
                         Console.WriteLine($"O CNPJ '{cnpj}' NÃO foi cadastrado");
                     }
                     sqlconn.Close();
@@ -205,7 +204,7 @@ namespace Poc_Farmtech
                     }
                     else
                     {
-                        //calculo de validação do cpf
+                        
                         Console.WriteLine($"O ENDEREÇO DO CNPJ '{cnpj}' NÃO foi cadastrado");
                     }
                     sqlconn.Close();
@@ -217,7 +216,9 @@ namespace Poc_Farmtech
 
 
             }
-            //endereço
+            
+            Console.WriteLine("Aperte enter quando quiser voltar para o menu");
+            Console.ReadLine();
             Program.menu(usrName);
         }
     }
